@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <!-- Work around https://github.com/dotnet/project-system/issues/4314 -->
+        <TargetFramework>$(TargetFramework)</TargetFramework>
+        <LangVersion>11</LangVersion>
+        <IsPackable>false</IsPackable>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <OutputPath>..\bin\Content.Server\</OutputPath>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <NoWarn>1998</NoWarn>
+        <WarningsAsErrors>nullable</WarningsAsErrors>
+        <Nullable>enable</Nullable>
+        <ServerGarbageCollection>true</ServerGarbageCollection>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="All"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <NativeLibs Condition="'$(Configuration)' == 'Release' And '$(OS)' == 'Windows_NT'" Include="$(SolutionDir)/RVVM/artifacts/release/rvvm.dll"/>
+        <NativeLibs Condition="'$(Configuration)' == 'Debug' And '$(OS)' == 'Windows_NT'" Include="$(SolutionDir)/RVVM/artifacts/debug/rvvm.dll"/>
+
+        <None Include="@(NativeLibs)">
+            <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\RVVM\artifacts\NativeMethods.rvvm.g.cs">
+            <Link>NativeMethods.rvvm.g.cs</Link>
+        </Compile>
+    </ItemGroup>
+
+    <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets"/>
+</Project>
